@@ -1,33 +1,59 @@
 # Lightweight AI Inference Pipeline
 
-A production-friendly, lightweight Python inference system for text classification and model serving. This project is designed to deliver efficient AI inference with a small footprint, dynamic batching, optional backend flexibility, and observability for real-world deployment scenarios.
+A production-friendly, lightweight Python project for text classification and AI inference serving. This repository provides a clean pipeline for sentiment analysis with modular preprocessing, backend inference, postprocessing, dynamic batching, and a simple HTTP API.
 
-The repository contains a modular inference pipeline for sentiment analysis that can run locally via CLI or expose an HTTP API for high-throughput usage.
+The project is designed to run efficiently in small environments while still supporting modern inference workflows and benchmarking.
+
+## Live Demo
+
+You can run the project locally as a live inference demo:
+
+```bash
+cd Lightweight-AI-Inference-Pipeline--main/Lightweight-AI-Inference-Pipeline--main/inference_pipeline
+python -m venv .venv
+source .venv/bin/activate   # Linux/macOS
+# .venv\Scripts\activate  # Windows
+pip install -r requirements.txt
+python -m inference_pipeline.main server --backend numpy --host 0.0.0.0 --port 8000
+```
+
+Then test it with:
+
+```bash
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"input":"I love this product!"}'
+```
+
+You can also open these endpoints in the browser:
+
+- http://localhost:8000/health
+- http://localhost:8000/metrics
+
+If you deploy this project on a cloud platform, replace localhost with your public server URL.
 
 ## Overview
 
-This project demonstrates a clean architecture for deploying a lightweight AI model in a minimal environment:
+This repository demonstrates how to build a compact AI inference system with:
 
-- Zero-dependency inference using NumPy as the default execution backend
-- Optional Scikit-learn and ONNX support when available
-- Dynamic request batching for improved throughput under load
-- HTTP-based inference API for serving predictions
-- Performance metrics and profiling to evaluate inference latency
-- Training utilities and model export workflow for sentiment classification
+- Zero-dependency NumPy-based inference by default
+- Optional scikit-learn and ONNX support
+- Dynamic request batching for throughput optimization
+- REST API for serving predictions
+- Metrics and latency profiling
+- Training and export utilities for the model
 
 ## Key Features
 
-- Fast and lightweight execution
-- Modular preprocessor, backend, and postprocessor pipeline design
-- Thread-safe dynamic batching for concurrent requests
-- Request profiling with throughput and percentile statistics
-- Flexible model backends for NumPy, scikit-learn, and ONNX
-- REST API for local or embedded deployment
-- End-to-end testing for pipeline behavior and correctness
+- Lightweight and fast inference runtime
+- Modular pipeline architecture
+- Thread-safe dynamic batching
+- Request profiling and throughput telemetry
+- Configurable model backends
+- Local CLI and HTTP API execution
+- Unit-tested pipeline behavior
 
 ## Repository Structure
-
-The project is organized as a nested package structure derived from the original source archive:
 
 ```text
 Lightweight-weight-interface-pipleine/
@@ -63,7 +89,7 @@ git clone https://github.com/saravanavel07/Lightweight-weight-interface-pipleine
 cd Lightweight-weight-interface-pipleine
 ```
 
-### 2. Navigate to the project package
+### 2. Navigate to the project directory
 
 ```bash
 cd Lightweight-AI-Inference-Pipeline--main/Lightweight-AI-Inference-Pipeline--main/inference_pipeline
@@ -85,13 +111,11 @@ pip install -r requirements.txt
 
 ## Training the Model
 
-Train the sentiment model used by the pipeline:
-
 ```bash
 python -m inference_pipeline.main train
 ```
 
-This generates the necessary serialized model artifacts in the `models` directory.
+This creates the export files and model artifacts used by the pipeline.
 
 ## Running Predictions
 
@@ -109,19 +133,17 @@ python -m inference_pipeline.main predict "This product is terrible and unreliab
 
 ## Starting the API Server
 
-Launch the built-in REST API server with batching enabled:
-
 ```bash
 python -m inference_pipeline.main server --backend numpy --host 0.0.0.0 --port 8000 --max-batch-size 16 --max-wait-ms 50
 ```
 
-The service exposes endpoints such as:
+Available endpoints:
 
-- `GET /health` — system health check
-- `GET /metrics` — performance metrics and latency telemetry
-- `POST /predict` — single or batched text inference requests
+- `GET /health` — health status
+- `GET /metrics` — performance and latency metrics
+- `POST /predict` — single or batched inference requests
 
-Example payload:
+Example input payload:
 
 ```json
 {
@@ -139,29 +161,25 @@ Batch payload:
 
 ## Benchmarking
 
-Run a basic concurrent load test against the API:
-
 ```bash
 python -m inference_pipeline.main benchmark --threads 10 --duration 5 --query-batch-size 1
 ```
 
-This helps evaluate request throughput and latency performance under parallel traffic.
+This helps measure throughput, latency, and batching efficiency under concurrent usage.
 
 ## Architecture
 
-The project follows a modular pipeline architecture:
+The project follows a modular design:
 
-- `pipeline/preprocessors/` — transforms raw text into model-ready representations
-- `pipeline/backends/` — runs inference using different model execution engines
-- `pipeline/postprocessors/` — converts model outputs into human-readable labels
-- `pipeline/manager.py` — orchestrates the full inference flow
-- `pipeline/batcher.py` — groups requests for efficient processing
-- `pipeline/profiler.py` — records latency and throughput metrics
-- `api/server.py` — exposes the inference service over HTTP
+- `pipeline/preprocessors/` — text-to-feature preprocessing
+- `pipeline/backends/` — model inference engines
+- `pipeline/postprocessors/` — label generation and output formatting
+- `pipeline/manager.py` — orchestration logic
+- `pipeline/batcher.py` — request batching
+- `pipeline/profiler.py` — profiling and metrics
+- `api/server.py` — HTTP API server
 
 ## Testing
-
-Run the unit tests for pipeline behavior and batching logic:
 
 ```bash
 python -m unittest discover -s inference_pipeline/tests
@@ -169,12 +187,10 @@ python -m unittest discover -s inference_pipeline/tests
 
 ## Use Cases
 
-This project is suitable for:
-
-- sentiment analysis services
-- lightweight model serving in constrained environments
-- experimentation with batching and inference optimization
-- educational demonstrations of modular ML pipeline design
+- Sentiment analysis services
+- Lightweight AI inference in resource-constrained environments
+- Model serving experiments and benchmarking
+- Educational demos of modular ML pipelines
 
 ## License
 
@@ -182,11 +198,11 @@ This project is distributed under the repository's chosen license. Please review
 
 ## Contributing
 
-Contributions are welcome. If you want to extend the pipeline with new backends, preprocessing logic, or API features, open a pull request with a clear description of the improvement.
+Contributions are welcome. If you want to add a new backend, improve preprocessing, or extend the API, open a pull request with a clear explanation of the change.
 
 ## Project Summary
 
-The Lightweight AI Inference Pipeline is a practical example of how to build a compact, modular, and high-throughput inference service for text classification. It balances simplicity, performance, and extensibility while keeping the implementation approachable for learning and deployment.
+The Lightweight AI Inference Pipeline is a compact, modular, and efficient solution for text classification and model serving. It combines simplicity, performance, and extensibility to make lightweight AI deployment straightforward.
 
 ---
 
